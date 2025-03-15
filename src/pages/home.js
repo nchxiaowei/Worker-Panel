@@ -441,7 +441,7 @@ export async function renderHomePage (proxySettings, isPassSet) {
                     <div class="form-control">
                         <label for="localDNS">🏚️ Local DNS</label>
                         <input type="text" id="localDNS" name="localDNS" value="${localDNS}"
-                            pattern="^(?:\\d{1,3}\\.){3}\\d{1,3}$"
+                            pattern="^(localhost|(?:\\d{1,3}\\.){3}\\d{1,3})$"
                             title="Please enter a valid DNS IP Address!"  required>
                     </div>
                     <div class="form-control">
@@ -467,7 +467,7 @@ export async function renderHomePage (proxySettings, isPassSet) {
                     </div>
                     <div class="form-control">
                         <label for="scanner">🔎 Clean IP Scanner</label>
-                        <a href="https://scanner.github1.cloud/" name="scanner" target="_blank" style="width: 100%;">
+                        <a href="https://cfscan.vercel.app/" name="scanner" target="_blank" style="width: 100%;">
                             <button type="button" id="scanner" class="button">
                                 Online Scanner
                                 <span class="material-symbols-outlined">open_in_new</span>
@@ -1084,13 +1084,13 @@ export async function renderHomePage (proxySettings, isPassSet) {
                     const configs = await response.json();
                     const zip = new JSZip();
                     configs.forEach( (config, index) => {
-                        zip.file('💦 BPB Warp config - ' + String(index + 1) + '.conf', config);
+                        zip.file('BPB-Warp-' + String(index + 1) + '.conf', config);
                     });
 
                     zip.generateAsync({ type: "blob" }).then(function (blob) {
                         const link = document.createElement("a");
                         link.href = URL.createObjectURL(blob);
-                        link.download = "💦 BPB Warp configs.zip";
+                        link.download = "BPB Warp configs.zip";
                         document.body.appendChild(link);
                         link.click();
                         document.body.removeChild(link);
