@@ -1051,9 +1051,9 @@ export async function renderHomePage (proxySettings, isPassSet) {
                     </div>
                     <div class="form-control">
                         <label for="scanner">🔎 Clean IP Scanner</label>
-                        <a href="https://cfscan.vercel.app/" name="scanner" target="_blank" style="width: 100%;">
+                        <a href="https://github.com/bia-pain-bache/Cloudflare-Clean-IP-Scanner/releases/tag/v2.2.5" name="scanner" target="_blank" style="width: 100%;">
                             <button type="button" id="scanner" class="button">
-                                Online Scanner
+                                Download Scanner
                                 <span class="material-symbols-outlined">open_in_new</span>
                             </button>
                         </a>
