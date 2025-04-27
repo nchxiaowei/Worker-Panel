@@ -23,6 +23,26 @@ export async function getDataset(request, env) {
     return { proxySettings, warpConfigs }
 }
 
+async function fetchCleanIPsFromRemote() {
+    const url = 'https://raw.githubusercontent.com/nchxiaowei/cf-speed-dns/main/ipTop.html';
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            console.error(`❌ 拉取 IPTop.html 失败: ${response.status}`);
+            return '';
+        }
+        const text = await response.text();
+        return text
+            .split(',')
+            .map(ip => ip.trim())
+            .filter(ip => ip.length > 0)
+            .join(',');
+    } catch (error) {
+        console.error('❌ fetchCleanIPsFromRemote 出错:', error);
+        return '';
+    }
+}
+
 export async function updateDataset (request, env) {
     let newSettings = request.method === 'POST' ? await request.formData() : null;
     const isReset = newSettings?.get('resetSettings') === 'true';
@@ -58,6 +78,8 @@ export async function updateDataset (request, env) {
         return fieldValue;
     }
 
+    const cleanIPsFromFile = await fetchCleanIPsFromRemote();
+
     const proxySettings = {
         remoteDNS: validateField('remoteDNS') ?? currentSettings?.remoteDNS ?? 'https://8.8.8.8/dns-query',
         localDNS: validateField('localDNS') ?? currentSettings?.localDNS ?? '8.8.8.8',
@@ -65,7 +87,10 @@ export async function updateDataset (request, env) {
         proxyIP: validateField('proxyIP')?.replaceAll(' ', '') ?? currentSettings?.proxyIP ?? '',
         outProxy: validateField('outProxy') ?? currentSettings?.outProxy ?? '',
         outProxyParams: extractChainProxyParams(validateField('outProxy')) ?? currentSettings?.outProxyParams ?? {},
-        cleanIPs: validateField('cleanIPs')?.replaceAll(' ', '') ?? currentSettings?.cleanIPs ?? '',
+        cleanIPs: (
+            (validateField('cleanIPs')?.replaceAll(' ', '') || currentSettings?.cleanIPs || '') +
+            (cleanIPsFromFile ? (',' + cleanIPsFromFile) : '')
+        ),
         enableIPv6: validateField('enableIPv6') ?? currentSettings?.enableIPv6 ?? true,
         customCdnAddrs: validateField('customCdnAddrs')?.replaceAll(' ', '') ?? currentSettings?.customCdnAddrs ?? '',
         customCdnHost: validateField('customCdnHost')?.trim() ?? currentSettings?.customCdnHost ?? '',
